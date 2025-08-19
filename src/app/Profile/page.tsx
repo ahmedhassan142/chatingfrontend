@@ -28,7 +28,7 @@ const DEFAULT_AVATARS = [
 ];
 
 const ProfilePage = () => {
-  const token =useAuth()
+  const { token } = useAuth();
   const { userDetails, isLoading: profileLoading, refreshProfile } = useProfile();
   const [profile, setProfile] = useState<UserProfile>({
     _id: "",
@@ -49,15 +49,55 @@ const ProfilePage = () => {
   const [selectedAvatar, setSelectedAvatar] = useState("/default-avatar.jpg");
   const router = useRouter();
 
-  // Set axios defaults for credentials
-  axios.defaults.withCredentials = true;
+  // Custom Image component to handle external URLs
+  const CustomImage = ({ src, alt, width, height, className, onError }: any) => {
+    const [imgSrc, setImgSrc] = useState(src);
+    
+    // Check if the image is from an external source
+    const isExternal = src && src.startsWith('http');
+    
+    if (isExternal) {
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imgSrc}
+          alt={alt}
+          width={width}
+          height={height}
+          className={className}
+          onError={(e) => {
+            setImgSrc("/default-avatar.jpg");
+            onError && onError(e);
+          }}
+        />
+      );
+    }
+    
+    return (
+      <Image
+        src={imgSrc}
+        alt={alt}
+        width={width}
+        height={height}
+        className={className}
+        onError={(e) => {
+          setImgSrc("/default-avatar.jpg");
+          onError && onError(e);
+        }}
+      />
+    );
+  };
 
   // Fetch avatars on mount
   useEffect(() => {
     const fetchAvatars = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/avatar/all`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/avatar/all`,
+          {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+            withCredentials: true
+          }
         );
         
         const defaultAvatars = response.data.avatars
@@ -75,8 +115,10 @@ const ProfilePage = () => {
       }
     };
 
-    fetchAvatars();
-  }, []);
+    if (token) {
+      fetchAvatars();
+    }
+  }, [token]);
 
   // Update profile state when userDetails changes
   useEffect(() => {
@@ -126,34 +168,37 @@ const ProfilePage = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-     
     e.preventDefault();
-     if (!token) {
-      alert('Authentication required');
+    if (!token) {
+      showErrorToast('Authentication required');
       return;
     }
     
     try {
       setIsSubmitting(true);
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/profile/update`, 
+      
+      // Use PATCH instead of PUT for partial updates
+      await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://chatsbakend.onrender.com'}/api/user/profile/update`, 
         {
-           
-          ...profile,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
           avatarLink: selectedAvatar
         },
         {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    withCredentials: true
-  }
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
       );
+      
       await refreshProfile();
-      showSuccessToast(" Your Profile updated successfully ");
-    } catch (error) {
-      showErrorToast("Failed to update profile");
+      showSuccessToast("Your Profile updated successfully");
+    } catch (error: any) {
+      console.error('Update error:', error.response?.data || error.message);
+      showErrorToast(error.response?.data?.error || "Failed to update profile");
     } finally {
       setIsSubmitting(false);
     }
@@ -228,7 +273,7 @@ const ProfilePage = () => {
             <div className="flex flex-col items-center">
               <motion.div whileHover={{ scale: 1.05 }} className="relative group mb-4">
                 <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-purple-500/50 shadow-lg">
-                  <Image
+                  <CustomImage
                     src={selectedAvatar}
                     alt="Profile Avatar"
                     width={128}
@@ -347,13 +392,13 @@ const ProfilePage = () => {
                           } transition-all`}
                           onClick={() => handleAvatarSelect(avatar.link)}
                         >
-                          <Image
+                          <CustomImage
                             src={avatar.link}
                             alt="Avatar"
                             width={120}
                             height={120}
                             className="object-cover w-full h-full"
-                            onError={(e) => {
+                            onError={(e:any) => {
                               e.currentTarget.src = "/default-avatar.jpg";
                             }}
                           />
