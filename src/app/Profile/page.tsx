@@ -28,6 +28,7 @@ const DEFAULT_AVATARS = [
 ];
 
 const ProfilePage = () => {
+  const token =useAuth()
   const { userDetails, isLoading: profileLoading, refreshProfile } = useProfile();
   const [profile, setProfile] = useState<UserProfile>({
     _id: "",
@@ -125,13 +126,22 @@ const ProfilePage = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+     
     e.preventDefault();
+     if (!token) {
+      alert('Authentication required');
+      return;
+    }
     
     try {
       setIsSubmitting(true);
       await axios.put(
         `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/profile/update`, 
-        {
+        {headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+           withCredentials: true,
           ...profile,
           avatarLink: selectedAvatar
         }
