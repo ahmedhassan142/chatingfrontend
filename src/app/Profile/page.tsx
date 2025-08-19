@@ -137,17 +137,21 @@ const ProfilePage = () => {
       setIsSubmitting(true);
       await axios.put(
         `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/profile/update`, 
-        {headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-           withCredentials: true,
+        {
+           
           ...profile,
           avatarLink: selectedAvatar
-        }
+        },
+        {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    withCredentials: true
+  }
       );
       await refreshProfile();
-      showSuccessToast("Profile updated successfully!");
+      showSuccessToast(" Your Profile updated successfully ");
     } catch (error) {
       showErrorToast("Failed to update profile");
     } finally {
