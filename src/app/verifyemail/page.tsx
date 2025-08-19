@@ -41,7 +41,7 @@ const VerifyEmailContent = () => {
       } catch (error) {
         setVerificationStatus('error');
         setLoading(false);
-        toast.error("Verification failed");
+        toast.error("Verification failed due to server");
         setTimeout(() => router.push('/register'), 2000);
       }
     };
