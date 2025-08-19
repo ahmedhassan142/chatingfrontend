@@ -208,7 +208,7 @@ const getStatusIndicator = (status?: string) => {
     setDeletingId(messageId);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4001"}/api/user/messages/${messageId}`, 
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/messages/${messageId}`, 
         {
           method: 'DELETE',
           headers: {
@@ -251,7 +251,7 @@ const getStatusIndicator = (status?: string) => {
     setIsDeletingAll(true);
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4001"}/api/user/messages/clear-conversation/${selectedUserId}`, 
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/messages/clear-conversation/${selectedUserId}`, 
         {
           method: 'DELETE',
           headers: {

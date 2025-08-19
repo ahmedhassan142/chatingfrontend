@@ -93,7 +93,7 @@ const handleUserSelect = (userId: string) => {
   if (!isAuthenticated) return;
      setLoadingContacts(true);
   try {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4001"}/api/user/people`, {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/people`, {
       headers: {
         Authorization: `Bearer ${token}`,
         withCredentials: true
@@ -140,7 +140,7 @@ const fetchMessages = useCallback(async (loadMore = false, beforeDate?: string) 
 
   try {
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4001"}/api/user/messages/${selectedUserId}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/messages/${selectedUserId}`,
       { 
         headers: { Authorization: `Bearer ${token}` },
         params: {
@@ -172,6 +172,7 @@ const fetchMessages = useCallback(async (loadMore = false, beforeDate?: string) 
     return false;
   }
 }, [selectedUserId, token]);
+
   const connectToWebSocket = useCallback(() => {
   // Validate authentication state
   if (!isAuthenticated || !token) {
@@ -183,19 +184,16 @@ const fetchMessages = useCallback(async (loadMore = false, beforeDate?: string) 
   setConnectionStatus('connecting');
   
   // Construct WebSocket URL with fallbacks
-  const isHttps = window.location.protocol === 'https:';
-  const wsProtocol = isHttps ? 'wss://' : 'ws://';
-  const wsHost = process.env.NEXT_PUBLIC_WS_HOST || window.location.hostname;
-  const wsPort = process.env.NEXT_PUBLIC_WS_PORT || '4001';
-  const wsPath = process.env.NEXT_PUBLIC_WS_PATH || '/ws';
-  const wsUrl = `${wsProtocol}${wsHost}:${wsPort}${wsPath}?token=${encodeURIComponent(token)}`;
+  // const isHttps = window.location.protocol === 'https:';
+  // const wsProtocol = isHttps ? 'wss://' : 'ws://';
+  // const wsHost = process.env.NEXT_PUBLIC_WS_HOST || window.location.hostname;
+  // const wsPort = process.env.NEXT_PUBLIC_WS_PORT || '4001';
+  // const wsPath = process.env.NEXT_PUBLIC_WS_PATH || '/ws';
+  const wsUrl = `wss://chatsbakend.onrender.com/ws?token=${encodeURIComponent(token)}`;
 
-  console.log(`[WebSocket] Connecting to: ${wsUrl}`);
+ console.log(`[WebSocket] Connecting to: ${wsUrl}`);
   console.debug('[WebSocket] Connection details:', {
-    protocol: wsProtocol,
-    host: wsHost,
-    port: wsPort,
-    path: wsPath,
+    url: wsUrl,
     tokenPresent: !!token
   });
 

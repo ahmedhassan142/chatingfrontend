@@ -92,7 +92,7 @@ const checkAuth = async (): Promise<boolean> => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:4001/api/user/login",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -114,7 +114,7 @@ const checkAuth = async (): Promise<boolean> => {
     setIsLoading(true);
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL ||"http://localhost:4001"}/api/user/logout`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/logout`,
         {},
         { 
           headers: {

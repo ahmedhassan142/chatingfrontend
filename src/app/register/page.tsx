@@ -32,7 +32,7 @@ const Register = () => {
     setLoading(true);
     try {
       const { data: res } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user/register`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/register`,
         data
       );
       toast.success(res.message, {

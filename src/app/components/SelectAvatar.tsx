@@ -29,7 +29,7 @@ const SelectAvatar: React.FC<SelectAvatarProps> = ({
     const fetchAvatars = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/avatar/all`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/avatar/all`);
         setAvatars(response.data.avatars);
       } catch (error) {
         console.error("Error fetching avatars:", error);

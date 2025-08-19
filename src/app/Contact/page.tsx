@@ -22,7 +22,7 @@ export default function ContactPage() {
     setLoading(true);
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4001"}/api/contact`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

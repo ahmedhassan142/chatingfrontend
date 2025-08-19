@@ -42,7 +42,7 @@ export const ProfileProvider: React.FC<{children: ReactNode}> = ({ children }) =
       const cookieToken = Cookies.get("authToken");
       
       const response = await axios.get(
-        "http://localhost:4001/api/user/profile",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/profile`,
         {
           headers: {
             Authorization: cookieToken ? `Bearer ${cookieToken}` : undefined

@@ -56,7 +56,7 @@ const ProfilePage = () => {
     const fetchAvatars = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4001"}/api/avatar/all`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/avatar/all`
         );
         
         const defaultAvatars = response.data.avatars
@@ -130,7 +130,7 @@ const ProfilePage = () => {
     try {
       setIsSubmitting(true);
       await axios.put(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4001"}/api/user/profile/update`, 
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "https://chatsbakend.onrender.com"}/api/user/profile/update`, 
         {
           ...profile,
           avatarLink: selectedAvatar
